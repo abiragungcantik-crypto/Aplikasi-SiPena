@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../alat pinjaman/aalat_pinjaman_page.dart';
 
 class DashboardAdminPage extends StatelessWidget {
   const DashboardAdminPage({super.key});
@@ -23,7 +24,10 @@ class DashboardAdminPage extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Alat"),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: "User"),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "Riwayat"),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "Aktivitas"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart),
+            label: "Aktivitas",
+          ),
         ],
       ),
 
@@ -32,7 +36,6 @@ class DashboardAdminPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // ===== HEADER =====
               Container(
                 width: double.infinity,
@@ -47,13 +50,18 @@ class DashboardAdminPage extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Dashboard",
-                        style: TextStyle(color: Colors.white, fontSize: 18)),
-                    Text("Admin",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                    Text(
+                      "Dashboard",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    Text(
+                      "Admin",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -65,8 +73,7 @@ class DashboardAdminPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "Ringkasan sistem penyewaan",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
 
@@ -103,8 +110,7 @@ class DashboardAdminPage extends StatelessWidget {
                 ),
                 child: const Text(
                   "Daftar Riwayat",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
 
@@ -128,8 +134,7 @@ class DashboardAdminPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "Klik disini",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
 
@@ -140,12 +145,11 @@ class DashboardAdminPage extends StatelessWidget {
                 child: Column(
                   children: const [
                     _ActionButton(
-                        icon: Icons.keyboard_return,
-                        label: "Pengembalian"),
+                      icon: Icons.keyboard_return,
+                      label: "Pengembalian",
+                    ),
                     SizedBox(height: 10),
-                    _ActionButton(
-                        icon: Icons.assignment,
-                        label: "Peminjaman"),
+                    _ActionButton(icon: Icons.assignment, label: "Peminjaman"),
                   ],
                 ),
               ),
@@ -183,14 +187,12 @@ class _SummaryCard extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70),
-          ),
+          Text(title, style: const TextStyle(color: Colors.white70)),
         ],
       ),
     );
@@ -216,14 +218,18 @@ class _HistoryItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(date,
-              style:
-                  const TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(
+            date,
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
         ],
       ),
     );
@@ -251,10 +257,13 @@ class _ActionButton extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.white),
           const SizedBox(width: 8),
-          Text(label,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
