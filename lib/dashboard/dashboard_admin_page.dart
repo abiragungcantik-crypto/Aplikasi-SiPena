@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import '../alat pinjaman/aalat_pinjaman_page.dart';
+=======
+import 'package:sipena/auth/widget/admin_navbarr.dart';
+import 'package:sipena/alat/alat_pinjaman_page.dart';
+import 'package:sipena/aktiviitas/aktivitas_page.dart';
+
+>>>>>>> b0cc0fc (belum)
 
 class DashboardAdminPage extends StatelessWidget {
   const DashboardAdminPage({super.key});
@@ -12,6 +19,7 @@ class DashboardAdminPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: bgColor,
 
+<<<<<<< HEAD
       // ===== BOTTOM NAVBAR =====
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -30,6 +38,10 @@ class DashboardAdminPage extends StatelessWidget {
           ),
         ],
       ),
+=======
+      // ✅ NAVBAR DIPANGGIL DARI FILE TERPISAH
+      bottomNavigationBar: const AdminNavbar(currentIndex: 0),
+>>>>>>> b0cc0fc (belum)
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -50,6 +62,7 @@ class DashboardAdminPage extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+<<<<<<< HEAD
                     Text(
                       "Dashboard",
                       style: TextStyle(color: Colors.white, fontSize: 18),
@@ -62,18 +75,34 @@ class DashboardAdminPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+=======
+                    Text("Dashboard",
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    SizedBox(height: 4),
+                    Text("Admin",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold)),
+>>>>>>> b0cc0fc (belum)
                   ],
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
 
-              // ===== RINGKASAN =====
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "Ringkasan sistem penyewaan",
+<<<<<<< HEAD
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+=======
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: primary),
+>>>>>>> b0cc0fc (belum)
                 ),
               ),
 
@@ -88,68 +117,77 @@ class DashboardAdminPage extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: const [
-                    _SummaryCard("Total user", "20", Icons.person),
-                    _SummaryCard("Total alat", "10", Icons.inventory_2),
-                    _SummaryCard("Tersedia", "5", Icons.check_circle),
-                    _SummaryCard("Dipinjam", "5", Icons.warning_amber),
+                    SummaryCard("Total user", "20", Icons.person),
+                    SummaryCard("Total alat", "10", Icons.inventory),
+                    SummaryCard("Tersedia", "5", Icons.check_circle_outline),
+                    SummaryCard("Dipinjam", "5", Icons.warning_amber_outlined),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+              const Divider(color: primary),
 
-              // ===== RIWAYAT =====
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  border: Border(
-                    top: BorderSide(color: primary.withOpacity(0.4)),
-                  ),
-                ),
-                child: const Text(
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
                   "Daftar Riwayat",
+<<<<<<< HEAD
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+=======
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: primary),
+>>>>>>> b0cc0fc (belum)
                 ),
               ),
 
-              const _HistoryItem(
-                "Peminjaman Alat 01",
-                "01 Januari 2025, 09.00",
-              ),
-              const _HistoryItem(
-                "Peminjaman Alat 02",
-                "02 Januari 2025, 10.00",
-              ),
-              const _HistoryItem(
-                "Peminjaman Alat 03",
-                "03 Januari 2025, 12.00",
-              ),
+              const HistoryItem(
+                  "Peminjaman Alat 01", "01 Januari 2025, 09.00"),
+              const HistoryItem(
+                  "Peminjaman Alat 02", "02 Januari 2025, 10.00"),
+              const HistoryItem(
+                  "Peminjaman Alat 03", "03 Januari 2025, 12.00"),
 
               const SizedBox(height: 16),
+              const Divider(color: primary),
 
-              // ===== KLIK DISINI =====
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.all(16),
                 child: Text(
                   "Klik disini",
+<<<<<<< HEAD
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+=======
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: primary),
+>>>>>>> b0cc0fc (belum)
                 ),
               ),
-
-              const SizedBox(height: 10),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: const [
+<<<<<<< HEAD
                     _ActionButton(
                       icon: Icons.keyboard_return,
                       label: "Pengembalian",
                     ),
                     SizedBox(height: 10),
                     _ActionButton(icon: Icons.assignment, label: "Peminjaman"),
+=======
+                    ActionButton(
+                        icon: Icons.keyboard_return,
+                        label: "Pengembalian"),
+                    SizedBox(height: 10),
+                    ActionButton(
+                        icon: Icons.assignment,
+                        label: "Peminjaman"),
+>>>>>>> b0cc0fc (belum)
                   ],
                 ),
               ),
@@ -163,13 +201,13 @@ class DashboardAdminPage extends StatelessWidget {
   }
 }
 
-// ===== SUMMARY CARD =====
-class _SummaryCard extends StatelessWidget {
+// ===== KOMPONEN =====
+class SummaryCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
 
-  const _SummaryCard(this.title, this.value, this.icon);
+  const SummaryCard(this.title, this.value, this.icon);
 
   @override
   Widget build(BuildContext context) {
@@ -184,6 +222,7 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.white),
           const Spacer(),
+<<<<<<< HEAD
           Text(
             value,
             style: const TextStyle(
@@ -192,6 +231,13 @@ class _SummaryCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+=======
+          Text(value,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold)),
+>>>>>>> b0cc0fc (belum)
           Text(title, style: const TextStyle(color: Colors.white70)),
         ],
       ),
@@ -199,12 +245,11 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-// ===== HISTORY ITEM =====
-class _HistoryItem extends StatelessWidget {
+class HistoryItem extends StatelessWidget {
   final String title;
   final String date;
 
-  const _HistoryItem(this.title, this.date);
+  const HistoryItem(this.title, this.date);
 
   @override
   Widget build(BuildContext context) {
@@ -218,6 +263,7 @@ class _HistoryItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+<<<<<<< HEAD
           Text(
             title,
             style: const TextStyle(
@@ -230,24 +276,31 @@ class _HistoryItem extends StatelessWidget {
             date,
             style: const TextStyle(color: Colors.white70, fontSize: 12),
           ),
+=======
+          Text(title,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(date,
+              style: const TextStyle(color: Colors.white70, fontSize: 12)),
+>>>>>>> b0cc0fc (belum)
         ],
       ),
     );
   }
 }
 
-// ===== ACTION BUTTON =====
-class _ActionButton extends StatelessWidget {
+class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _ActionButton({required this.icon, required this.label});
+  const ActionButton({super.key, required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
         color: DashboardAdminPage.primary,
         borderRadius: BorderRadius.circular(12),
@@ -255,7 +308,7 @@ class _ActionButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.white),
+          Icon(icon, color: Colors.white, size: 18),
           const SizedBox(width: 8),
           Text(
             label,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sipena/dashboard/dashboard_admin_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+// Sesuaikan import ini dengan lokasi file Anda di VS Code
+import 'package:sipena/dashboard/dashboard_admin_page.dart';
+import 'package:sipena/petugas/dashboard/dashboard_petugas_page.dart';
+// import 'package:sipena/PENYEWA/dashboard_penyewa_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,49 +15,65 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  
+  // Variabel Role
+  String? _selectedRole; 
+  final List<String> _roles = ['admin', 'petugas', 'penyewa'];
+
   bool _isLoading = false;
   bool _obscureText = true;
 
   Future<void> _handleLogin() async {
+    if (_selectedRole == null) {
+      _showErrorBanner("Pilih Role", "Silakan pilih role Anda terlebih dahulu");
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
+      // 1. Login ke Supabase Auth
       final res = await Supabase.instance.client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
       final authUser = res.user;
-      if (authUser == null) {
-        _showErrorBanner();
-        return;
-      }
+      if (authUser == null) throw Exception("User tidak ditemukan");
 
-      // 🔑 Ambil role dari tabel "user"
+      // 2. Cek Role di tabel 'user' database
       final userData = await Supabase.instance.client
           .from('user')
           .select('role')
           .eq('auth_user_id', authUser.id)
           .single();
 
-      final role = userData['role'];
+      final actualRole = userData['role'];
 
       if (!mounted) return;
 
-      if (role == 'admin') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const DashboardAdminPage()),
-        );
+      // 3. Validasi: Apakah pilihan di UI sama dengan data di Database?
+      if (actualRole.toString().toLowerCase() == _selectedRole!.toLowerCase()) {
+        if (actualRole == 'admin') {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardAdminPage()));
+        } else if (actualRole == 'petugas') {
+        } else if (actualRole == 'penyewa') {
+          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardPenyewaPage()));
+        }
+      } else {
+        // Jika role tidak cocok, paksa logout demi keamanan
+        await Supabase.instance.client.auth.signOut();
+        _showErrorBanner("Akses Ditolak", "Role yang dipilih tidak sesuai dengan akun Anda");
       }
+      
     } catch (e) {
-      _showErrorBanner();
+      _showErrorBanner("Gagal Login", "Email atau Password salah");
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _showErrorBanner() {
+  void _showErrorBanner(String title, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         elevation: 0,
@@ -65,22 +84,14 @@ class _LoginPageState extends State<LoginPage> {
           decoration: BoxDecoration(
             color: const Color(0xFFE5E5E5),
             borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "error",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                "Terjadi kesalahan / Data tidak sesuai",
-                style: TextStyle(color: Colors.black54, fontSize: 12),
-              ),
+              Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              Text(message, style: const TextStyle(color: Colors.black54, fontSize: 12)),
             ],
           ),
         ),
@@ -97,56 +108,53 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Agar judul rata kiri
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // LOGO
+              // LOGO (Menggunakan Image.asset sesuai VS Code Anda)
               Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Image.asset(
-                    'assets/images/sipena.jpg',
-                    fit: BoxFit.contain,
-                  ),
+                child: Image.asset(
+                  'assets/images/sipena.jpg', 
+                  height: 120,
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 80),
                 ),
               ),
-
               const SizedBox(height: 30),
 
-              // FIELD USERNAME
-              _buildFieldLabel("Username"),
+              // DROPDOWN ROLE
+              _buildFieldLabel("Pilih Role"),
               const SizedBox(height: 8),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: 'masukkan email',
-                  filled: true,
-                  fillColor: const Color(0xFFEAD7C2),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEAD7C2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedRole,
+                    hint: const Text("Pilih Akses"),
+                    decoration: const InputDecoration(border: InputBorder.none),
+                    items: _roles.map((role) => DropdownMenuItem(
+                      value: role,
+                      child: Text(role.toUpperCase(), style: const TextStyle(color: Color(0xFF6F3F1E))),
+                    )).toList(),
+                    onChanged: (val) => setState(() => _selectedRole = val),
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // USERNAME
+              _buildFieldLabel("Username / Email"),
+              const SizedBox(height: 8),
+              _buildTextField(_emailController, "masukkan email", false),
 
               const SizedBox(height: 16),
 
-              // FIELD PASSWORD
+              // PASSWORD
               _buildFieldLabel("Password"),
               const SizedBox(height: 8),
-              TextField(
-                controller: _passwordController,
-                obscureText: _obscureText,
-                decoration: InputDecoration(
-                  hintText: 'masukkan password',
-                  filled: true,
-                  fillColor: const Color(0xFFEAD7C2),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
+              _buildTextField(_passwordController, "masukkan password", true),
 
               const SizedBox(height: 32),
 
@@ -158,20 +166,11 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6F3F1E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'MASUK',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  child: _isLoading 
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('MASUK', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -181,14 +180,23 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Helper widget untuk membuat label judul di atas field
   Widget _buildFieldLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF6F3F1E), // Warna cokelat gelap menyesuaikan tema
+    return Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF6F3F1E)));
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hint, bool isPass) {
+    return TextField(
+      controller: controller,
+      obscureText: isPass ? _obscureText : false,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: const Color(0xFFEAD7C2),
+        suffixIcon: isPass ? IconButton(
+          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF6F3F1E)),
+          onPressed: () => setState(() => _obscureText = !_obscureText),
+        ) : null,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
       ),
     );
   }
