@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '/auth/widget/admin_navbarr.dart';
+import '../kategori/kategori_alat_page.dart';
+import '../widget/admin_navbarr.dart';
 
 class PeminjamanPage extends StatefulWidget {
   const PeminjamanPage({super.key});

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sipena/peminjam/dashboard/dashboard_page.dart';
+import 'package:sipena/petugas/navbarr/petuugas_navbarr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-// Sesuaikan import ini dengan lokasi file Anda di VS Code
-import 'package:sipena/dashboard/dashboard_admin_page.dart';
-import 'package:sipena/petugas/dashboard/dashboard_petugas_page.dart';
-// import 'package:sipena/PENYEWA/dashboard_penyewa_page.dart';
+import 'package:sipena/admin/dashboard/dashboard_admin_page.dart';
+
+import '../peminjam/navbar peminjam/navbar_peminjam_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,17 +16,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
-  // Variabel Role
-  String? _selectedRole; 
-  final List<String> _roles = ['admin', 'petugas', 'penyewa'];
 
   bool _isLoading = false;
   bool _obscureText = true;
 
   Future<void> _handleLogin() async {
-    if (_selectedRole == null) {
-      _showErrorBanner("Pilih Role", "Silakan pilih role Anda terlebih dahulu");
+    // Validasi input kosong
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      _showErrorBanner("Input Kosong", "Silakan masukkan email dan password");
       return;
     }
 
@@ -41,35 +39,49 @@ class _LoginPageState extends State<LoginPage> {
       final authUser = res.user;
       if (authUser == null) throw Exception("User tidak ditemukan");
 
-      // 2. Cek Role di tabel 'user' database
+      // 2. Ambil data role dari tabel 'user' berdasarkan auth_user_id
       final userData = await Supabase.instance.client
           .from('user')
           .select('role')
           .eq('auth_user_id', authUser.id)
           .single();
 
-      final actualRole = userData['role'];
+      final actualRole = userData['role'].toString().toLowerCase();
 
       if (!mounted) return;
 
-      // 3. Validasi: Apakah pilihan di UI sama dengan data di Database?
-      if (actualRole.toString().toLowerCase() == _selectedRole!.toLowerCase()) {
-        if (actualRole == 'admin') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardAdminPage()));
-        } else if (actualRole == 'petugas') {
-        } else if (actualRole == 'penyewa') {
-          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardPenyewaPage()));
-        }
+      // 3. Navigasi Otomatis Berdasarkan Role dari Database
+      if (actualRole == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const DashboardAdminPage()),
+        );
+      } else if (actualRole == 'petugas') {
+        // Ganti dengan Class Wrapper/Dashboard petugas yang sesuai
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainPetugasScreen()),
+        );
+      } else if (actualRole == 'peminjam') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const PeminjamNavbar()),
+        );
       } else {
-        // Jika role tidak cocok, paksa logout demi keamanan
-        await Supabase.instance.client.auth.signOut();
-        _showErrorBanner("Akses Ditolak", "Role yang dipilih tidak sesuai dengan akun Anda");
+        throw Exception("Role tidak dikenali");
       }
-      
     } catch (e) {
-      _showErrorBanner("Gagal Login", "Email atau Password salah");
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      // Cetak error asli ke console untuk debugging
+      print("DEBUG_ERROR: $e");
+
+      if (e is AuthException) {
+        _showErrorBanner(
+          "Gagal Login",
+          e.message,
+        ); // Menampilkan pesan asli dari Supabase
+      } else {
+        _showErrorBanner("Gagal Login", "Terjadi kesalahan sistem");
+      }
     }
   }
 
@@ -82,16 +94,26 @@ class _LoginPageState extends State<LoginPage> {
         content: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFE5E5E5),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+            border: Border.all(color: Colors.redAccent),
+            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-              Text(message, style: const TextStyle(color: Colors.black54, fontSize: 12)),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                message,
+                style: const TextStyle(color: Colors.black87, fontSize: 12),
+              ),
             ],
           ),
         ),
@@ -110,55 +132,31 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // LOGO (Menggunakan Image.asset sesuai VS Code Anda)
               Center(
                 child: Image.asset(
-                  'assets/images/sipena.jpg', 
+                  'assets/images/sipena.jpg',
                   height: 120,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 80),
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.account_circle,
+                    size: 80,
+                    color: Color(0xFF6F3F1E),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
 
-              // DROPDOWN ROLE
-              _buildFieldLabel("Pilih Role"),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEAD7C2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedRole,
-                    hint: const Text("Pilih Akses"),
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    items: _roles.map((role) => DropdownMenuItem(
-                      value: role,
-                      child: Text(role.toUpperCase(), style: const TextStyle(color: Color(0xFF6F3F1E))),
-                    )).toList(),
-                    onChanged: (val) => setState(() => _selectedRole = val),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // USERNAME
-              _buildFieldLabel("Username / Email"),
+              _buildFieldLabel("Email"),
               const SizedBox(height: 8),
               _buildTextField(_emailController, "masukkan email", false),
 
               const SizedBox(height: 16),
 
-              // PASSWORD
               _buildFieldLabel("Password"),
               const SizedBox(height: 8),
               _buildTextField(_passwordController, "masukkan password", true),
 
               const SizedBox(height: 32),
 
-              // BUTTON MASUK
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -166,11 +164,26 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6F3F1E),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: _isLoading 
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('MASUK', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'MASUK',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -181,10 +194,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildFieldLabel(String label) {
-    return Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF6F3F1E)));
+    return Text(
+      label,
+      style: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF6F3F1E),
+      ),
+    );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, bool isPass) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String hint,
+    bool isPass,
+  ) {
     return TextField(
       controller: controller,
       obscureText: isPass ? _obscureText : false,
@@ -192,11 +216,19 @@ class _LoginPageState extends State<LoginPage> {
         hintText: hint,
         filled: true,
         fillColor: const Color(0xFFEAD7C2),
-        suffixIcon: isPass ? IconButton(
-          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF6F3F1E)),
-          onPressed: () => setState(() => _obscureText = !_obscureText),
-        ) : null,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+        suffixIcon: isPass
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: const Color(0xFF6F3F1E),
+                ),
+                onPressed: () => setState(() => _obscureText = !_obscureText),
+              )
+            : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }

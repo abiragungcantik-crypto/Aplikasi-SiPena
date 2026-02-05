@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sipena/auth/widget/admin_navbarr.dart';
+import 'package:sipena/admin/widget/admin_navbarr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AlatPage extends StatefulWidget {

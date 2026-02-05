@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sipena/dashboard/dashboard_admin_page.dart';
-import 'package:sipena/alat/alat_pinjaman_page.dart'; 
-import 'package:sipena/kategori/kategori_alat_page.dart';
-import 'package:sipena/aktiviitas/aktivitas_page.dart';
+import 'package:sipena/admin/dashboard/dashboard_admin_page.dart';
+import 'package:sipena/admin/alat/tambah_alat_page.dart'; 
+import '../kategori/kategori_alat_page.dart';
+import 'package:sipena/admin/aktiviitas/aktivitas_page.dart';
+import 'package:sipena/user/admin_management_user.dart'; // ✅ TAMBAHKAN INI
 
 class AdminNavbar extends StatelessWidget {
   final int currentIndex;
@@ -17,12 +18,11 @@ class AdminNavbar extends StatelessWidget {
         page = const DashboardAdminPage();
         break;
       case 1:
-        // Pastikan nama Class di file alat_pinjaman_page.dart adalah AlatPage
         page = const AlatPage(); 
         break;
       case 2:
-        // Ganti dengan halaman User jika sudah ada
-        page = const DashboardAdminPage(); 
+        // ✅ SEKARANG KE HALAMAN USER
+        page = const ManagementUserPage(); 
         break;
       case 3:
         page = const KategoriPage(); 

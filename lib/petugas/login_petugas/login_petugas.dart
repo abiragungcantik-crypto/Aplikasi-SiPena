@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sipena/dashboard/dashboard_admin_page.dart';
+import 'package:sipena/admin/dashboard/dashboard_admin_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sipena/petugas/dashboard/dashboard_petugas_page.dart';
 import 'package:sipena/petugas/persetujuan/proses_persetujuan_screen.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sipena/log out/log out.dart';// Import Service Logout
-import 'package:sipena/auth/widget/admin_navbarr.dart'; // Sesuaikan path navbar kamu
+import 'package:sipena/admin/widget/admin_navbarr.dart'; // Sesuaikan path navbar kamu
 
 class LogAktivitasPage extends StatelessWidget {
   const LogAktivitasPage({super.key});
@@ -21,7 +21,7 @@ class LogAktivitasPage extends StatelessWidget {
 
       body: Column(
         children: [
-          // --- HEADER CUSTOM DENGAN TOMBOL LOGOUT ---
+          // ---  CUSTOM DENGAN TOMBOL LOGOUT ---
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 60, bottom: 25, left: 20, right: 15),
