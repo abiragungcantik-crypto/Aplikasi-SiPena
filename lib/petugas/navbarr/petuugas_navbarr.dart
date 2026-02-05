@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sipena/petugas/dashboard/dashboard_petugas_page.dart';
+import 'package:sipena/petugas/persetujuan/proses_persetujuan_screen.dart';
+
+import '../Pengembalian/penngembalian_page.dart';
+import '../laporaan/laporan_petugas_page.dart';
 
 // --- KONSTANTA WARNA ---
 const Color primaryBrown = Color(0xFF6D3C18);
@@ -34,19 +39,25 @@ class _MainPetugasScreenState extends State<MainPetugasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBrown,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Menggunakan CustomHeader yang didefinisikan di bawah
-            CustomHeader(title: _titles[_selectedIndex]),
-            
-            // Area Konten Dinamis
-            Expanded(
-              child: _buildPage(_selectedIndex),
-            ),
+      // Di dalam build Scaffold
+body: SafeArea(
+  child: Column(
+    children: [
+      CustomHeader(title: _titles[_selectedIndex]),
+      Expanded(
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: const [
+            MainPetugas(),
+            ApprovalPage(),
+            KembaliPage(),
+            LaporanPage(),
           ],
         ),
       ),
+    ],
+  ),
+),
       // Menggunakan CustomNavBar yang didefinisikan di bawah
       bottomNavigationBar: CustomNavBar(
         currentIndex: _selectedIndex,
@@ -55,20 +66,6 @@ class _MainPetugasScreenState extends State<MainPetugasScreen> {
     );
   }
 
-  Widget _buildPage(int index) {
-    switch (index) {
-      case 0:
-        return const Center(child: Text("Halaman Dashboard")); 
-      case 1:
-        return const ApprovalContent(); 
-      case 2:
-        return const KembaliPageContent(); 
-      case 3:
-        return const Center(child: Text("Halaman Laporan"));
-      default:
-        return const Center(child: Text("Halaman Tidak Ditemukan"));
-    }
-  }
 }
 
 // --- MODULAR HEADER ---
@@ -145,76 +142,6 @@ class CustomNavBar extends StatelessWidget {
           ),
           Text(label, style: const TextStyle(color: Colors.white, fontSize: 10)),
         ],
-      ),
-    );
-  }
-}
-
-// --- KONTEN HALAMAN KEMBALI ---
-class KembaliPageContent extends StatelessWidget {
-  const KembaliPageContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        const Text(
-          'DAFTAR PENGEMBALIAN',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryBrown),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(15),
-            children: [
-              _buildCard('Cantika Cantiku', 'Layar Proyektor'),
-              _buildCard('Muhammad Raju', 'Scanner'),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCard(String name, String item) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: secondaryBrown.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: primaryBrown.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            backgroundColor: primaryBrown, 
-            child: Icon(Icons.person, color: Colors.white)
-          ),
-          const SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(item, style: const TextStyle(fontSize: 12)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// --- KONTEN HALAMAN APPROVAL ---
-class ApprovalContent extends StatelessWidget {
-  const ApprovalContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        "Konten Persetujuan di sini",
-        style: TextStyle(color: primaryBrown, fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -30,26 +30,6 @@ final List<Widget> _pages = [
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: primaryBrown,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
-                ),
-              ),
-              child: const Text(
-                'Dashboard\nPetugas',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
 
             Expanded(
               child: ListView(
@@ -123,7 +103,6 @@ final List<Widget> _pages = [
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -222,53 +201,7 @@ final List<Widget> _pages = [
       ),
     );
   }
-Widget _buildBottomNav() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      color: const Color(0xFF6D3C18), // primaryBrown
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.home_outlined, 'Home', 0),
-          _navItem(Icons.assignment_outlined, 'Pinjaman', 1),
-          _navItem(Icons.assignment_return_outlined, 'Kembali', 2),
-          _navItem(Icons.show_chart_outlined, 'Laporan', 3),
-        ],
-      ),
-    );
-  }
 
-  Widget _navItem(IconData icon, String label, int index) {
-    // Mengecek apakah tombol ini yang sedang dipilih
-    bool isActive = _selectedIndex == index;
 
-    return GestureDetector(
-      onTap: () {
-        // Fungsi utama: merubah halaman saat diklik
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isActive ? const Color(0xFFE2D1C1) : Colors.transparent,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon, 
-              color: isActive ? const Color(0xFF6D3C18) : Colors.white
-            ),
-          ),
-          Text(
-            label, 
-            style: const TextStyle(color: Colors.white, fontSize: 10)
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

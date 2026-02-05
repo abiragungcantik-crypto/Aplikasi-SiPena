@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sipena/admin/widget/admin_navbarr.dart';
-import 'package:sipena/user/admin_management_user.dart';
+import 'package:sipena/admin/user/admin_management_user.dart';
+
+import '../management peminjaman/peminjaman_page.dart';
 
 class DashboardAdminPage extends StatelessWidget {
   const DashboardAdminPage({super.key});
@@ -58,9 +60,10 @@ class DashboardAdminPage extends StatelessWidget {
                 child: Text(
                   "Ringkasan sistem penyewaan",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: primary),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: primary,
+                  ),
                 ),
               ),
 
@@ -82,19 +85,27 @@ class DashboardAdminPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const ManagementUserPage(),
+                            builder: (context) => const ManagementUserPage(),
                           ),
                         );
                       },
-                      child:
-                          const SummaryCard("Total user", "20", Icons.person),
+                      child: const SummaryCard(
+                        "Total user",
+                        "20",
+                        Icons.person,
+                      ),
                     ),
                     const SummaryCard("Total alat", "10", Icons.inventory),
                     const SummaryCard(
-                        "Tersedia", "5", Icons.check_circle_outline),
+                      "Tersedia",
+                      "5",
+                      Icons.check_circle_outline,
+                    ),
                     const SummaryCard(
-                        "Dipinjam", "5", Icons.warning_amber_outlined),
+                      "Dipinjam",
+                      "5",
+                      Icons.warning_amber_outlined,
+                    ),
                   ],
                 ),
               ),
@@ -105,9 +116,10 @@ class DashboardAdminPage extends StatelessWidget {
                 child: Text(
                   "Daftar Riwayat Terbaru",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: primary),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: primary,
+                  ),
                 ),
               ),
 
@@ -123,9 +135,10 @@ class DashboardAdminPage extends StatelessWidget {
                 child: Text(
                   "Aksi Cepat",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: primary),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: primary,
+                  ),
                 ),
               ),
 
@@ -134,14 +147,32 @@ class DashboardAdminPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  children: const [
+                  children: [
                     ActionButton(
-                        icon: Icons.keyboard_return,
-                        label: "Kelola Pengembalian"),
-                    SizedBox(height: 10),
+                      icon: Icons.keyboard_return,
+                      label: "Kelola Pengembalian",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PeminjamanPage(),
+                          ), // Ganti dengan nama class halaman peminjaman Anda
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 10),
                     ActionButton(
-                        icon: Icons.assignment,
-                        label: "Kelola Peminjaman"),
+                      icon: Icons.assignment,
+                      label: "Kelola Peminjaman",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PeminjamanPage(),
+                          ), // Ganti dengan nama class halaman peminjaman Anda
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -180,13 +211,18 @@ class SummaryCard extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          Text(title,
-              style: const TextStyle(
-                  color: DashboardAdminPage.vanilla, fontSize: 12)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: DashboardAdminPage.vanilla,
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );
@@ -220,8 +256,9 @@ class HistoryItem extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                    color: DashboardAdminPage.primary,
-                    fontWeight: FontWeight.bold),
+                  color: DashboardAdminPage.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 date,
@@ -240,7 +277,7 @@ class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const ActionButton({super.key, required this.icon, required this.label});
+  const ActionButton({super.key, required this.icon, required this.label, required Null Function() onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -259,9 +296,10 @@ class ActionButton extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
           ),
         ],
       ),

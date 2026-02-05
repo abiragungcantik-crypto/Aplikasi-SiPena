@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
-// --- PALETTE WARNA (Bisa kamu pindahkan ke file core/theme kamu) ---
-class AppColors {
-  static const Color primaryDark = Color(0xFF4E342E); // Cokelat sangat tua
-  static const Color background = Color(0xFFC5A381); // Cokelat medium
-  static const Color cardBg = Color(0xFFD9B99B);    // Cokelat muda
-  static const Color textDark = Color(0xFF3E2723);  // Warna teks gelap
-}
+// Gunakan konstanta warna yang sama dengan MainPetugasScreen agar senada
+const Color primaryBrown = Color(0xFF6D3C18);
+const Color bgBrown = Color(0xFFD9C0A7);
+const Color secondaryBrown = Color(0xFFE2D1C1);
 
 class ApprovalPage extends StatefulWidget {
   const ApprovalPage({super.key});
@@ -16,86 +13,59 @@ class ApprovalPage extends StatefulWidget {
 }
 
 class _ApprovalPageState extends State<ApprovalPage> {
-  int _currentTab = 0; // Index untuk filter: 0=Diproses, 1=Diterima, 2=Ditolak
+  int _currentTab = 0; // 0=Diproses, 1=Diterima, 2=Ditolak
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      // Header yang menyatu dengan status bar
-      appBar: AppBar(
-        backgroundColor: AppColors.primaryDark,
-        elevation: 0,
-        toolbarHeight: 70,
-        title: const Text(
-          "Dashboard\nPetugas",
-          style: TextStyle(fontSize: 14, color: Colors.white, height: 1.2),
+    // JANGAN gunakan Scaffold di sini karena sudah ada di MainPetugasScreen
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        const Text(
+          "PROSES PERSETUJUAN",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: primaryBrown,
+            letterSpacing: 1.1,
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 24),
-          const Text(
-            "PROSES PERSETUJUAN",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
-              letterSpacing: 1.1,
-            ),
+        const SizedBox(height: 15),
+        
+        // Row Filter Tab (Diproses, Diterima, Ditolak)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildTabItem("Diproses", 0),
+              _buildTabItem("Diterima", 1),
+              _buildTabItem("Ditolak", 2),
+            ],
           ),
-          const SizedBox(height: 16),
-          
-          // Row Filter Tab (Diproses, Diterima, Ditolak)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildTabItem("Diproses", 0),
-                _buildTabItem("Diterima", 1),
-                _buildTabItem("Ditolak", 2),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Divider(color: AppColors.primaryDark, thickness: 1.5),
-          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Divider(color: primaryBrown, thickness: 1.5),
+        ),
 
-          // Area List Data
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: 4, 
-              itemBuilder: (context, index) {
-                // Sesuai data di database: Tabel Peminjaman & User
-                return _ApprovalCard(
-                  nama: "Cantika Cantiku",
-                  role: "karyawan",
-                  alat: "Layar Proyektor",
-                  tanggal: "26 Januari 2026",
-                  activeTab: _currentTab,
-                );
-              },
-            ),
+        // Area List Data
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            itemCount: 3, // Sesuaikan dengan jumlah data nanti
+            itemBuilder: (context, index) {
+              return _ApprovalCard(
+                nama: "Cantika Cantiku",
+                role: "karyawan",
+                alat: "Layar Proyektor",
+                tanggal: "26 Januari 2026",
+                activeTab: _currentTab,
+              );
+            },
           ),
-        ],
-      ),
-      // Navigasi Bawah sesuai Gambar
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.primaryDark,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        currentIndex: 1, // Focus pada icon Pinjaman
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), label: 'Pinjaman'),
-          BottomNavigationBarItem(icon: Icon(Icons.archive_outlined), label: 'Kembali'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Laporan'),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -104,17 +74,15 @@ class _ApprovalPageState extends State<ApprovalPage> {
     return GestureDetector(
       onTap: () => setState(() => _currentTab = index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: isActive
-            ? BoxDecoration(
-                color: AppColors.primaryDark.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(10),
-              )
-            : null,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? secondaryBrown : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Text(
           label,
           style: TextStyle(
-            color: AppColors.textDark,
+            color: primaryBrown,
             fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             fontSize: 13,
           ),
@@ -124,7 +92,6 @@ class _ApprovalPageState extends State<ApprovalPage> {
   }
 }
 
-// --- PRIVATE WIDGET UNTUK CARD (MODULAR) ---
 class _ApprovalCard extends StatelessWidget {
   final String nama;
   final String role;
@@ -143,12 +110,12 @@ class _ApprovalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primaryDark.withOpacity(0.1)),
+        color: secondaryBrown.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: primaryBrown.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,29 +127,29 @@ class _ApprovalCard extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 18,
-                    backgroundColor: AppColors.primaryDark,
-                    child: Icon(Icons.person, color: Colors.white, size: 18),
+                    backgroundColor: primaryBrown,
+                    child: Icon(Icons.person, color: Colors.white, size: 20),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(nama, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                      Text(role, style: const TextStyle(fontSize: 11)),
+                      Text(role, style: const TextStyle(fontSize: 12, color: Colors.black54)),
                     ],
                   ),
                 ],
               ),
-              Text(tanggal, style: const TextStyle(fontSize: 10)),
+              Text(tanggal, style: const TextStyle(fontSize: 10, color: Colors.black45)),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.only(left: 46, top: 4),
-            child: Text("Layar Proyektor", style: TextStyle(fontSize: 13)),
+          Padding(
+            padding: const EdgeInsets.only(left: 48, top: 5),
+            child: Text(alat, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 15),
           
-          // Logika Tombol Sesuai Status di Gambar
+          // Tombol Aksi sesuai Tab
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: _buildButtons(),
@@ -193,11 +160,10 @@ class _ApprovalCard extends StatelessWidget {
   }
 
   List<Widget> _buildButtons() {
-    // Tombol menyesuaikan tab yang dipilih
     if (activeTab == 0) { // Tab Diproses
       return [
         _actionButton("tidak diterima", false),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
         _actionButton("diterima", true),
       ];
     } else if (activeTab == 1) { // Tab Diterima
@@ -209,18 +175,18 @@ class _ApprovalCard extends StatelessWidget {
 
   Widget _actionButton(String label, bool isPrimary) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: isPrimary ? AppColors.primaryDark : Colors.transparent,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: AppColors.primaryDark),
+        color: isPrimary ? primaryBrown : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: primaryBrown),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isPrimary ? Colors.white : AppColors.primaryDark,
+          color: isPrimary ? Colors.white : primaryBrown,
           fontSize: 11,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

@@ -21,7 +21,7 @@ import 'admin/alat/tambah_alat_page.dart';
 import 'admin/management peminjaman/peminjaman_page.dart';
 import 'admin/aktiviitas/aktivitas_page.dart';
 import 'admin/kategori/kategori_alat_page.dart';
-import 'user/admin_management_user.dart';
+import 'admin/user/admin_management_user.dart';
 import 'package:sipena/petugas/Pengembalian/penngembalian_page.dart';
 import 'package:sipena/petugas/laporaan/laporan_petugas_page.dart';
 import 'petugas/dashboard/dashboard_petugas_page.dart';

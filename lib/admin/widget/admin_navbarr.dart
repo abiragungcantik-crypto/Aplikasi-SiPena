@@ -3,7 +3,7 @@ import 'package:sipena/admin/dashboard/dashboard_admin_page.dart';
 import 'package:sipena/admin/alat/tambah_alat_page.dart'; 
 import '../kategori/kategori_alat_page.dart';
 import 'package:sipena/admin/aktiviitas/aktivitas_page.dart';
-import 'package:sipena/user/admin_management_user.dart'; // ✅ TAMBAHKAN INI
+import 'package:sipena/admin/user/admin_management_user.dart'; // ✅ TAMBAHKAN INI
 
 class AdminNavbar extends StatelessWidget {
   final int currentIndex;

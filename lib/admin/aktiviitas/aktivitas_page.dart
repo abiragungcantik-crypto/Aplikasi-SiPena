@@ -1,27 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:sipena/log out/log out.dart';// Import Service Logout
-import 'package:sipena/admin/widget/admin_navbarr.dart'; // Sesuaikan path navbar kamu
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
+import 'package:sipena/log out/log out.dart';
+import 'package:sipena/admin/widget/admin_navbarr.dart';
+import 'package:intl/intl.dart'; // Untuk format tanggal (tambah di pubspec.yaml)
 
-class LogAktivitasPage extends StatelessWidget {
+class LogAktivitasPage extends StatefulWidget {
   const LogAktivitasPage({super.key});
+
+  @override
+  State<LogAktivitasPage> createState() => _LogAktivitasPageState();
+}
+
+class _LogAktivitasPageState extends State<LogAktivitasPage> {
+  // Instance Supabase
+  final supabase = Supabase.instance.client;
 
   // Variabel Warna Tema
   final Color espresso = const Color(0xFF5D3216);
   final Color vanilla = const Color(0xFFD9C5B2);
   final Color background = const Color(0xFFC9B097);
-  final Color accentGreen = const Color(0xFF99B898); 
-  final Color accentOrange = const Color(0xFFE5B181); 
+  final Color accentGreen = const Color(0xFF99B898);
+  final Color accentOrange = const Color(0xFFE5B181);
+
+  // Fungsi untuk mengambil data dari tabel log_aktivitas
+  Future<List<Map<String, dynamic>>> fetchLogs() async {
+    final response = await supabase
+        .from('log_aktivitas')
+        .select()
+        .order('created_at', ascending: false); // Urutkan dari yang terbaru
+    return response as List<Map<String, dynamic>>;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
-      // Navbar tetap di index 4 (atau sesuaikan dengan urutan menu kamu)
-      bottomNavigationBar: const AdminNavbar(currentIndex: 4), 
-
+      bottomNavigationBar: const AdminNavbar(currentIndex: 4),
       body: Column(
         children: [
-          // ---  CUSTOM DENGAN TOMBOL LOGOUT ---
+          // --- HEADER ---
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 60, bottom: 25, left: 20, right: 15),
@@ -31,76 +48,87 @@ class LogAktivitasPage extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
                   'Log\nAktivitas',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    height: 1.1,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold, height: 1.1),
                 ),
-                // Tombol Logout di Pojok Kanan Atas Header
                 IconButton(
                   onPressed: () => AuthService.logout(context),
                   icon: const Icon(Icons.logout, color: Colors.white, size: 28),
-                  tooltip: 'Keluar Aplikasi',
                 ),
               ],
             ),
           ),
-
           const SizedBox(height: 20),
-          
+
           // --- SUBTITLE ---
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              'Riwayat semua tindakan yang dilakukan oleh admin, petugas, dan peminjam',
-              style: TextStyle(
-                color: Color(0xFF5D3216),
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+              'Riwayat otomatis perubahan data',
+              style: TextStyle(color: espresso, fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
-
           const SizedBox(height: 15),
 
-          // --- LIST DATA AKTIVITAS ---
+          // --- LIST DATA DARI SUPABASE ---
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              children: [
-                _buildActivityCard(
-                  role: "PETUGAS",
-                  date: "01 Januari 2026",
-                  desc: "Pengajuan peminjaman atas nama Cantika cantik\nkami setujui yaitu layar Proyektor",
-                  status: "Pengajuan",
-                  statusColor: accentGreen,
-                  icon: Icons.check_circle_outline,
-                ),
-                _buildActivityCard(
-                  role: "PEMINJAM",
-                  date: "10 Januari 2026",
-                  desc: "Mengajukan pinjaman atas nama Upin ardiansyah\nuntuk Presentasi",
-                  status: "Proses",
-                  statusColor: accentOrange,
-                  icon: Icons.history,
-                  isUnderlined: true,
-                ),
-                _buildActivityCard(
-                  role: "ADMIN",
-                  date: "02 Februari 2026",
-                  desc: "Memberi keputusan untuk petugas yang mengajukan pinjaman",
-                  status: "Persetujuan",
-                  statusColor: accentGreen,
-                  icon: Icons.check_circle_outline,
-                ),
-                const SizedBox(height: 20), // Padding bawah agar tidak tertutup navbar
-              ],
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: fetchLogs(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('Tidak ada riwayat aktivitas.'));
+                }
+
+                final logs = snapshot.data!;
+
+                return RefreshIndicator(
+                  onRefresh: () async => setState(() {}), // Tarik ke bawah untuk refresh
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    itemCount: logs.length,
+                    itemBuilder: (context, index) {
+                      final log = logs[index];
+                      
+                      // Logika warna berdasarkan tipe aktivitas
+                      Color statusColor;
+                      IconData icon;
+                      String aksi = log['aktivitas']?.toString().toUpperCase() ?? 'UNKNOWN';
+
+                      if (aksi == 'INSERT') {
+                        statusColor = accentGreen;
+                        icon = Icons.add_circle_outline;
+                      } else if (aksi == 'UPDATE') {
+                        statusColor = accentOrange;
+                        icon = Icons.edit_note;
+                      } else {
+                        statusColor = Colors.redAccent;
+                        icon = Icons.delete_forever;
+                      }
+
+                      // Format tanggal
+                      DateTime createdAt = DateTime.parse(log['created_at']);
+                      String formattedDate = DateFormat('dd MMMM yyyy, HH:mm').format(createdAt);
+
+                      return _buildActivityCard(
+                        role: aksi,
+                        date: formattedDate,
+                        desc: log['deskripsi'] ?? 'Tidak ada deskripsi',
+                        status: aksi,
+                        statusColor: statusColor,
+                        icon: icon,
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -108,7 +136,6 @@ class LogAktivitasPage extends StatelessWidget {
     );
   }
 
-  // --- WIDGET CARD AKTIVITAS ---
   Widget _buildActivityCard({
     required String role,
     required String date,
@@ -116,7 +143,6 @@ class LogAktivitasPage extends StatelessWidget {
     required String status,
     required Color statusColor,
     required IconData icon,
-    bool isUnderlined = false,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -137,18 +163,10 @@ class LogAktivitasPage extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     role,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      decoration: isUnderlined ? TextDecoration.underline : null,
-                      decorationColor: Colors.blue,
-                      decorationThickness: 2,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ],
               ),
-              // Badge Status
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
@@ -158,11 +176,7 @@ class LogAktivitasPage extends StatelessWidget {
                 ),
                 child: Text(
                   status,
-                  style: TextStyle(
-                    color: statusColor, 
-                    fontSize: 11, 
-                    fontWeight: FontWeight.bold
-                  ),
+                  style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -170,14 +184,7 @@ class LogAktivitasPage extends StatelessWidget {
           const SizedBox(height: 12),
           Text(date, style: TextStyle(color: vanilla, fontSize: 13)),
           const SizedBox(height: 6),
-          Text(
-            desc,
-            style: const TextStyle(
-              color: Colors.white, 
-              fontSize: 13, 
-              height: 1.4
-            ),
-          ),
+          Text(desc, style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.4)),
         ],
       ),
     );
